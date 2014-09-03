@@ -1,0 +1,120 @@
+<html lang="ja">
+<head>
+
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>LocalStorage</title>
+    <link rel="stylesheet/title" href="styles/jquery-mobile.css">
+    <script type="text/javascript" src="scripts/libs/jquery.js"></script>
+      <script type="text/javascript" src="scripts/libs/jquery.mobile-1.3.2.js"></script>
+      <script data-main="scripts/main" src="scripts/libs/require.js"></script>
+<script type="text/javascript">
+
+$(function(){
+	
+  	//ページを開いたら自動で現在のIDと内容を確認する
+	load();
+
+});
+
+	//ブラウザチェック
+	if (typeof localStorage == 'undefined') {
+  		document.write("<p>お使いのブラウザではWeb Storageが使えません。</p>");
+ 	} else {
+  	//セッションストレージ設定
+  		var storage = localStorage;
+  	}
+
+
+	//ボタンイベント1 保存
+  	function setlocalStorage() {
+    	var key = document.getElementById("textkey").value;
+    	var value = document.getElementById("textdata").value;
+    	if (key && value) {
+          //valueをJSONへ変換
+          var json_value = JSON.stringify(value);
+      		storage.setItem(key, json_value);
+    	}
+    	key = "";
+    	value = "";
+    	viewStorage();
+  	}
+
+  	//ボタンイベント2 削除
+  	function removeStorage() {
+    	var key = document.getElementById("textkey").value;
+    	storage.removeItem(key);
+    	key = "";
+    	viewStorage();
+  	}
+
+	//ボタンイベント3 全て削除
+  	function removeallStorage() {
+    	storage.clear();
+    	viewStorage();
+  	}
+
+  //イベント発生時にテーブルにストレージの値を表示
+  	function viewStorage() {
+    	var list = document.getElementById("list")
+    	while (list.firstChild) list.removeChild(list.firstChild);
+    	for (var i=0; i < storage.length; i++) {
+      	var _key = storage.key(i);
+      	var tr = document.createElement("tr");
+      	var td1 = document.createElement("td");
+      	var td2 = document.createElement("td");
+      	list.appendChild(tr);
+      	tr.appendChild(td1);
+      	tr.appendChild(td2);
+      	td1.innerHTML = _key;
+      	td2.innerHTML = storage.getItem(_key);
+    	}
+  	}
+
+	  //起動時にテーブルにストレージの値を表示
+  	function load() {
+    	var list = document.getElementById("list")
+    	while (list.firstChild) list.removeChild(list.firstChild);
+    	for (var i=0; i < localStorage.length; i++) {
+      		var _key = localStorage.key(i);
+      		var tr = document.createElement("tr");
+      		var td1 = document.createElement("td");
+      		var td2 = document.createElement("td");
+      		list.appendChild(tr);
+      		tr.appendChild(td1);
+      		tr.appendChild(td2);
+      		td1.innerHTML = _key;
+      		td2.innerHTML = localStorage.getItem(_key);
+  		}
+	}
+
+</script>
+</head>
+
+<body>
+<div data-role-"page" id="EnterID">
+
+  <div data-role="header">
+         <h1>ホーム</h1>
+  </div>
+
+  <h4>入力フィールド</h4>
+  <p>Key：<input id="textkey" type="text" />　値：<input id="textdata" type="text" /></p>
+  <p align="left">  <button id="button" onclick="setlocalStorage()">保存</button>
+    <button id="button" onclick="removeStorage()">削除</button>
+    <button id="button" onclick="removeallStorage()">全て削除</button></p>
+  <h4>入力結果</h4>
+  <table class="tagForList2">
+    <tr>
+      <th>キー</th><th>値</th>
+    </tr>
+    <tbody id="list">
+    </tbody>
+  </table>
+
+  <div data-role="footer">
+         <p>CopyRight:Fukushi-Lab.</p>
+  </div>
+ </div>
+ <body> 
+</html>
