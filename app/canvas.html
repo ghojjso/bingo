@@ -25,10 +25,21 @@
                 return false;
              }
              var ctx = canvas.getContext('2d');
-              ctx.fillStyle = "rgb(0,0,255)";
+             
+              var imageData = new Array(); 
               for(var i=0; i<localStorage.length; i++){
-                ctx.fillRect(10+i*110,10,100,100);
-              }
+                imageData[i] = ctx.createImageData(100,100);
+                for (var j=0; j<imageData[0].width*imageData[0].height*4; j+=4){
+                  imageData[i].data[j+0] = 0;
+                  imageData[i].data[j+1] = 0;
+                  imageData[i].data[j+2] = 255;
+                  imageData[i].data[j+3] = 255;
+                }
+                 ctx.putImageData(imageData[i],10+(i%3)*110,10+Math.floor(i/3)*110);
+              }  
+              //ctx.putImageData(imageData[0],100,100)
+              //console.Log(imageData[0]);
+
             /** 各数字の画像をなんとかして入れたい 
               ctx.scale(0.2,0.2); 
               
@@ -146,7 +157,7 @@
     //ななめ走査
        for(i=0; i<localStorage.length; i++){
           for(j=0; j<5; j++){
-            if(Card[i].data[j][k] == 0){
+            if(Card[i].data[j][j] == 0){
               Nanamecount1++;
             }
             if( Nanamecount1 == 5){
