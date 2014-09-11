@@ -10,12 +10,16 @@
   	<script type ="text/javascript">
       var storage = localStorage;
   		 var Card =[];
+
+  		 var reach = [];
+  		 var bingo = [];
+  		   
        $( function() {  
             getObjects();
             CheckBingo();
            });
 
-        window.onload = function(){
+       window.onload = function(){
           draw();
         }
         
@@ -25,17 +29,33 @@
                 return false;
              }
              var ctx = canvas.getContext('2d');
+             var imageData = new Array();
              
-              var imageData = new Array(); 
               for(var i=0; i<localStorage.length; i++){
                 imageData[i] = ctx.createImageData(100,100);
-                for (var j=0; j<imageData[0].width*imageData[0].height*4; j+=4){
+                for (var j=0; j<imageData[i].width*imageData[i].height*4; j+=4){
+               
+              	if(reach[i]==2){
+                  imageData[i].data[j+0] = 255;
+                  imageData[i].data[j+1] = 0;
+                  imageData[i].data[j+2] = 0;
+                  imageData[i].data[j+3] = 255;
+              		}
+              	else if(reach[i]==0){
                   imageData[i].data[j+0] = 0;
                   imageData[i].data[j+1] = 0;
                   imageData[i].data[j+2] = 255;
                   imageData[i].data[j+3] = 255;
+              		}
+              	else if(reach[i]==1){
+                  imageData[i].data[j+0] = 255;
+                  imageData[i].data[j+1] = 255;
+                  imageData[i].data[j+2] = 0;
+                  imageData[i].data[j+3] = 255;
+              		}
                 }
                  ctx.putImageData(imageData[i],10+(i%3)*110,10+Math.floor(i/3)*110);
+                 console.log(reach);
               }  
               //ctx.putImageData(imageData[0],100,100)
               //console.Log(imageData[0]);
@@ -63,11 +83,33 @@
               }
             }**/
         }
+     /** function Red(i){
+      	console.log(imageData[i]);
+      	imageData[i] = ctx.createImageData(100,100);
+      	for (var j=0; j<imageData[i].width*imageData[i].height*4; j+=4){
+                  imageData[i].data[j+0] = 255;
+                  imageData[i].data[j+1] = 0;
+                  imageData[i].data[j+2] = 0;
+                  imageData[i].data[j+3] = 255;
+                }
+                ctx.putImageData(imageData[i],10+(i%3)*110,10+Math.floor(i/3)*110);
+      }
+      function Yellow(i){
+      	for (var j=0; j<imageData[i].width*imageData[i].height*4; j+=4){
+                  imageData[i].data[j+0] = 0;
+                  imageData[i].data[j+1] = 255;
+                  imageData[i].data[j+2] = 255;
+                  imageData[i].data[j+3] = 255;
+                }
+        ctx.putImageData(imageData[i],10+(i%3)*110,10+Math.floor(i/3)*110);
+      }**/
           
 
       function getObjects() {
             for (var i=0; i < localStorage.length; i++) {
                 var _key = localStorage.key(i);
+                reach[i]=0;
+                bingo[i]=0;
                 Card[i] = new Object();
                 Card[i].data = JSON.parse(localStorage.getItem(_key));
                 //console.log(typeof(Card[i].data));
@@ -84,6 +126,7 @@
           }
 
           function TurnBlack(){
+
             console.log(document.bingo.num.value);
             for(var i=0; i<localStorage.length; i++){
               for(var j=0; j<5; j++){
@@ -97,6 +140,7 @@
             
             SaveStorage();
             CheckBingo();
+            draw();
             for(var i=0; i<localStorage.length; i++){
               console.log("CardID:"+Card[i].data[0][5]);
               for(var j=0; j<5; j++){
@@ -124,15 +168,16 @@
                     Yokocount++;
                   }
                 }
-              if( Yokocount == 5){
+              if( Yokocount == 5){reach[i]=2;
                 console.log (i+"YokoBingo");
-              }
-              else if(Yokocount == 4){
+                }
+              else if(Yokocount == 4){reach[i]=1;
                 console.log (i+"YokoReach");
               }
              Yokocount = 0;
             }
             Yokocount = 0;
+
           }
     
         //縦走査
@@ -143,11 +188,13 @@
                   Tatecount++;
                 }
               }
-              if( Tatecount == 5){
+              if( Tatecount == 5){reach[i]=2;
                 console.log (i+"TateBingo");
+                	
               }
-              else if(Tatecount == 4){
+              else if(Tatecount == 4){reach[i]=1;
                 console.log (i+"TateReach");
+                	
               }
               Tatecount = 0;
             }
@@ -160,10 +207,10 @@
             if(Card[i].data[j][j] == 0){
               Nanamecount1++;
             }
-            if( Nanamecount1 == 5){
+            if( Nanamecount1 == 5){reach[i]=2;
               console.log (i+"NaNameBingo1");
             }
-            else if(Nanamecount1 == 4){
+            else if(Nanamecount1 == 4){reach[i]=1;
               console.log (i+"NaNameReach1");
             } 
           }
@@ -179,16 +226,17 @@
                 }
               }
             }
-            if(Nanamecount2 == 5){
+            if(Nanamecount2 == 5){reach[i]=2;
               console.log (i+"NaNameBingo2");
             }
-            else if(Nanamecount2 == 4){
+            else if(Nanamecount2 == 4){reach[i]=1;
               console.log (i+"NaNameReach2");
             }
         }
         Nanamecount2 = 0;
       } 
   }
+   
 
   function SaveStorage(){
     for(var i=0; i<localStorage.length; i++){
